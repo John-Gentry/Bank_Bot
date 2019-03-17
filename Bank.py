@@ -63,6 +63,34 @@ def bank_sheets(dis,type,amount,ppu):
                 return False
         except:
             return False
+    if type == "buy_market":
+        list = []
+        x = ""
+        market = sh.worksheet("Market")
+        user = market.col_values(1)
+        amount = market.col_values(2)
+        amount = amount[2:]
+        ppu = market.col_values(3)
+        ppu = ppu[2:]
+        user = user[2:]
+        print(user)
+        for i in range(0,len(user)):
+            list.append("User: <@!"+str(user[i])+">"+"   Amount: "+str(amount[i])+"   PPU: "+str(ppu[i]))
+        return list
+    if type == "sell_market":
+        list = []
+        x = ""
+        market = sh.worksheet("Market")
+        user = market.col_values(5)
+        amount = market.col_values(6)
+        amount = amount[2:]
+        ppu = market.col_values(7)
+        ppu = ppu[2:]
+        user = user[2:]
+        print(user)
+        for i in range(0,len(user)):
+            list.append("User: <@!"+str(user[i])+">"+"   Amount: "+str(amount[i])+"   PPU: "+str(ppu[i]))
+        return list
 def restart_program():
     python = sys.executable
     os.execl(python, python, * sys.argv)
@@ -103,8 +131,20 @@ async def on_message(message):
             msg = "You don't have enough shares.".format(message)
             await message.channel.send(msg)
     if message.content.startswith('>market'):
+        list1 = bank_sheets(str(message.author.id),"buy_market",0,0)
+        list2 = bank_sheets(str(message.author.id),"sell_market",0,0)
+        #msg = str(bank_sheets(str(message.author.id),"buy_market",0,0)).format(message)
+        #await message.channel.send(msg)
         embed = discord.Embed(title="Bank of Malta share market", description="For all your trading needs", color=0xFF0000)
-        embed.add_field(name="**Buy**", value="100", inline=True)
+        #embed.add_field(name="**Bids**", value="Buy orders on the market", inline=False)
+        s = ""
+        for i in range(0,len(list1)):
+            s = s + list1[i]+"\n"
+        embed.add_field(name="**Buy orders**", value=s, inline=False)
+        s = ""
+        for i in range(0,len(list2)):
+            s = s + list2[i]+"\n"
+        embed.add_field(name="**Sell orders**", value=s, inline=False)
         await message.channel.send(embed=embed)
 
 async def list_servers():
