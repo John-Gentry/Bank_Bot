@@ -34,8 +34,11 @@ def bank_sheets(dis,type):
     if type == "shares":
         disc = shares.find(dis)
         data = shares.row_values(disc.row)
-        return str(data)
+        return data
 
+def restart_program():
+    python = sys.executable
+    os.execl(python, python, * sys.argv)
 
 @client.event
 async def on_ready():
@@ -46,7 +49,13 @@ async def on_message(message):
     if message.author == client.user:
         return
     if message.content.startswith('>shares'):
-        bank_sheets(str(message.author.id),"shares")
+        list = bank_sheets(str(message.author.id),"shares")
+        msg = "```Discord: <@!"+list[1]+">\nShares: "+list[3]+"```".format(message)
+        await message.channel.send(msg)
+    if message.content.startswith('>restart'):
+        msg = 'Restarting...'.format(message)
+        await message.channel.send(msg)
+        restart_program()
 
 async def list_servers():
     await client.wait_until_ready()
