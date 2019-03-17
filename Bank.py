@@ -12,7 +12,7 @@ import sys
 import discord
 import logging
 from discord.ext import commands
-#import mechanicalsoup
+
 import gspread
 authorized_users = ["229086359833280512","226439688330674186","426468000934264853"]
 TOKEN = 'NTU2Njk4NjYzODU5MTI2Mjcy.D29hlw.iwZqFlvGM2mheZYoMkg2L4DklCQ'
