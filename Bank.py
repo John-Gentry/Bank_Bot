@@ -21,7 +21,7 @@ TOKEN = 'NTU2Njk4NjYzODU5MTI2Mjcy.D29hlw.iwZqFlvGM2mheZYoMkg2L4DklCQ'
 logging.basicConfig(level=logging.WARNING)
 description = '''Bot description here2'''
 client = commands.Bot(command_prefix='>', description=description)
-def bank_sheets():
+def bank_sheets(dis,type):
     from oauth2client.service_account import ServiceAccountCredentials
     scope = ['https://spreadsheets.google.com/feeds',
         'https://www.googleapis.com/auth/drive']
@@ -30,11 +30,23 @@ def bank_sheets():
     creds = ServiceAccountCredentials.from_json_keyfile_name(path, scope)
     clientt = gspread.authorize(creds)
     sh = clientt.open("Bank of Malta")
-    worksheet = sh.worksheet("Ownership")
+    shares = sh.worksheet("Ownership")
+    if type == "shares":
+        disc = shares.find(dis)
+        data = shares.row_values(disc.row)
+        return str(data)
+
 
 @client.event
 async def on_ready():
     print('Bot is ready for use')
+
+@client.event
+async def on_message(message):
+    if message.author == client.user:
+        return
+    if message.content.startswith('>shares'):
+        bank_sheets(str(message.author.id),"shares")
 
 async def list_servers():
     await client.wait_until_ready()
